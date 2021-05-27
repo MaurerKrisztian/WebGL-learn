@@ -1,13 +1,17 @@
 import { IColor } from "../Render";
 import { Uniforms } from "../glsl/data/Uniforms";
 import { IPoint } from "../math/Interfaces";
+import { Matrix3 } from "../math/Matrix3";
+import { Utils } from "../math/Utils";
 
 export interface IDrawable {
     draw(gl: any): any;
 }
 
 export class Rectangle implements IDrawable {
+    rotationDegree: number = 0
 
+    enablePathColor = false;
 
     constructor(private readonly rect: IRectangle,
                 private readonly color: IColor = {
@@ -18,6 +22,11 @@ export class Rectangle implements IDrawable {
                 }, private translation: IPoint = {x: 0, y: 0},
                 private rotation: IPoint = {x: 0, y: 1},
                 private scale: IPoint = {x: 1, y: 1},) {
+    }
+
+    setEnablePathColor(enable: boolean) {
+        this.enablePathColor = enable;
+        return this
     }
 
     setTranslation(translation: IPoint): this {
@@ -41,6 +50,7 @@ export class Rectangle implements IDrawable {
     }
 
     setRotationDegrees(degree: number) {
+        this.rotationDegree = degree
         var angleInRadians = degree * Math.PI / 180;
         var x = Math.sin(angleInRadians);
         var y = Math.cos(angleInRadians);
@@ -71,18 +81,31 @@ export class Rectangle implements IDrawable {
         ]), gl.STATIC_DRAW);
     }
 
+    getMatrix() {
+        // Compute the matrices
+        const translationMatrix = Matrix3.translation(this.translation.x, this.translation.y);
+        const rotationMatrix = Matrix3.rotation(Utils.angleToRadiant(this.rotationDegree));
+        const scaleMatrix = Matrix3.scaling(this.scale.x, this.scale.y);
+
+
+        // Multiply the matrices.
+        let matrix = Matrix3.multiply(translationMatrix, rotationMatrix);
+        matrix = Matrix3.multiply(matrix, scaleMatrix);
+
+        return matrix;
+    }
 
     draw(gl: any) {
         Rectangle.setRectangle(gl, this.rect.x, this.rect.y, this.rect.width, this.rect.height);
-        const translation = this.getTranslationArray()
-        const rotation = this.getRotationArray();
-        const scale = this.getScaleArray();
+        const matrix = this.getMatrix();
 
         // Set a random color.
         gl.uniform4f(Uniforms.u_color_location, this.color.r, this.color.g, this.color.b, this.color.alpha);
-        gl.uniform2fv(Uniforms.u_translation_location, translation);
-        gl.uniform2fv(Uniforms.u_rotation_location, rotation);
-        gl.uniform2fv(Uniforms.u_scale_location, scale);
+        gl.uniform1i(Uniforms.u_enable_path_color_location, this.enablePathColor ? 1 : 0);
+
+        console.log(matrix)
+        gl.uniformMatrix3fv(Uniforms.u_matrix_location, false, matrix);
+
 
         // Draw the rectangle.
         const primitiveType = gl.TRIANGLES;

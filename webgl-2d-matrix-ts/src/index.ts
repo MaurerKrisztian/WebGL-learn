@@ -17,10 +17,13 @@ gl.useProgram(program);
 
 Attributes.a_position_location = gl.getAttribLocation(program, "a_position");
 Uniforms.u_resolution_location = gl.getUniformLocation(program, "u_resolution");
+
+Uniforms.u_matrix_location = gl.getUniformLocation(program, "u_matrix")
 Uniforms.u_color_location = gl.getUniformLocation(program, "u_color")
-Uniforms.u_translation_location = gl.getUniformLocation(program, "u_translation");
-Uniforms.u_rotation_location = gl.getUniformLocation(program, "u_rotation");
-Uniforms.u_scale_location = gl.getUniformLocation(program, "u_scale")
+Uniforms.u_enable_path_color_location = gl.getUniformLocation(program, "u_enable_path_color")
+// Uniforms.u_translation_location = gl.getUniformLocation(program, "u_translation");
+// Uniforms.u_rotation_location = gl.getUniformLocation(program, "u_rotation");
+// Uniforms.u_scale_location = gl.getUniformLocation(program, "u_scale")
 
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -75,6 +78,7 @@ const slider_scale = new Slider("scale", 1, 5);
 
 slider_rotation.setCallback(() => {
     degree = Number.parseFloat(slider_rotation.getValue())
+    console.log("rotatoion... ", degree)
     update();
 })
 
@@ -98,12 +102,18 @@ let scale = 1
 
 function update() {
     // WebGL.initUpdate(gl);
-    renderer.draw(new Rectangle({x: 50, y: 100, width: 600, height: 260}, Colors.BLUE))
-    renderer.draw(new Triangle({x: 1000, y: 0}, {x: 200, y: 0}, {x: 500, y: 300}, Colors.RED))
-    renderer.draw(new Rectangle({x: 0, y: 0, width: 300, height: 300}, Colors.BLACK).setTranslation({
+
+    console.log("degreeeeeeeeeeeeeeeeee: ", degree)
+    const rect = new Rectangle({x: 0, y: 0, width: 300, height: 300}, Colors.BLACK).setTranslation({
         x: rectPosX,
         y: rectPosY
-    }).setRotationDegrees(degree).setScale({x: scale, y: scale}))
+    }).setRotationDegrees(degree).setScale({x: scale, y: scale}).setEnablePathColor(true)
+    console.log(rect)
+
+
+    renderer.draw(new Rectangle({x: 50, y: 100, width: 600, height: 260}, Colors.BLUE))
+    renderer.draw(new Triangle({x: 1000, y: 0}, {x: 200, y: 0}, {x: 500, y: 300}, Colors.RED))
+    renderer.draw(rect)
     renderer.draw(new Rectangle({x: 0, y: 0, width: 100, height: 300}, Colors.GREEN).setTranslation({
         x: 300,
         y: 100

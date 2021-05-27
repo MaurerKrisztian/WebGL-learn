@@ -1,0 +1,39 @@
+{
+  "name": "webgl-typescript-starter",
+  "version": "1.0.0",
+  "description": "three.js + typescript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack serve --inline --open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pinqy520/three-typescript-starter.git"
+  },
+  "keywords": [],
+  "author": "Huang Qi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pinqy520/three-typescript-starter/issues"
+  },
+  "homepage": "https://github.com/pinqy520/three-typescript-starter#readme",
+  "devDependencies": {
+    "css-loader": "latest",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "latest",
+    "progress-bar-webpack-plugin": "latest",
+    "raw-loader": "^4.0.2",
+    "style-loader": "latest",
+    "ts-loader": "latest",
+    "typescript": "latest",
+    "webpack": "latest",
+    "webpack-cli": "latest",
+    "webpack-dev-server": "latest"
+  },
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "glsl-shader-loader": "^0.1.6",
+    "webpack-glsl-loader": "^1.0.1"
+  }
+}
