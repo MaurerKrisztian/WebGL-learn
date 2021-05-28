@@ -1,28 +1,27 @@
-import { IColor } from "../Render";
-import { Uniforms } from "../glsl/data/Uniforms";
+import { IDrawable, IRectangle, Rectangle } from "./Rectangle";
+import { Colors } from "../Colors";
 import { IPoint3D } from "../math/Interfaces";
-import { Utils } from "../math/Utils";
-import { Matrix4Multiply } from "../math/Matrix4Multiply";
+import { IColor } from "../Render";
 import { Matrix4 } from "../math/Matrix4";
+import { Matrix4Multiply } from "../math/Matrix4Multiply";
+import { Utils } from "../math/Utils";
+import { Uniforms } from "../glsl/data/Uniforms";
 
-export interface IDrawable {
-    draw(gl: any): any;
-}
 
-export class Rectangle implements IDrawable {
+export class Rectangle3D implements IDrawable {
     rotationDegrees: IPoint3D = {x: 1, y: 1, z: 1}
 
     enablePathColor = false;
 
-    constructor(private readonly rect: IRectangle,
-                private readonly color: IColor = {
-                    r: 0,
-                    g: 0,
-                    b: 0,
-                    alpha: 1
-                }, public translation: IPoint3D = {x: 0, y: 0, z: 0},
-                private rotation: IPoint3D = {x: 0, y: 1, z: 0},
-                private scale: IPoint3D = {x: 1, y: 1, z: 1},) {
+    constructor(
+        private readonly color: IColor = {
+            r: 0,
+            g: 0,
+            b: 0,
+            alpha: 1
+        }, private translation: IPoint3D = {x: 0, y: 0, z: 0},
+        private rotation: IPoint3D = {x: 0, y: 1, z: 0},
+        private scale: IPoint3D = {x: 1, y: 1, z: 1},) {
     }
 
     setEnablePathColor(enable: boolean) {
@@ -83,37 +82,14 @@ export class Rectangle implements IDrawable {
 
     getMatrix(gl) {
 
-        var rotation = [Utils.angleToRadiant(40), Utils.angleToRadiant(25), Utils.angleToRadiant(325)];
-        var scale = [1, 1, 1];
-
         // Compute the matrices
-        var matrix = Matrix4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
+        var matrix = Matrix4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 1500);
         matrix = Matrix4Multiply.translate(matrix, this.translation.x, this.translation.y, this.translation.z);
         matrix = Matrix4Multiply.xRotate(matrix, Utils.angleToRadiant(this.rotationDegrees.x));
         matrix = Matrix4Multiply.yRotate(matrix, Utils.angleToRadiant(this.rotationDegrees.y));
         matrix = Matrix4Multiply.zRotate(matrix, Utils.angleToRadiant(this.rotationDegrees.z));
         matrix = Matrix4Multiply.scale(matrix, this.scale.x, this.scale.y, this.scale.z);
         return matrix;
-    }
-
-    draw(gl: any) {
-        Rectangle.setRectangle(gl, this.rect.x, this.rect.y, this.rect.width, this.rect.height);
-        const matrix = this.getMatrix(gl);
-
-        // Set a random color.
-        var color = [Math.random(), Math.random(), Math.random(), 1];
-        gl.uniform4fv(Uniforms.u_color_location, [this.color.r, this.color.g, this.color.b, this.color.alpha]);
-        // gl.uniform1i(Uniforms.u_enable_path_color_location, this.enablePathColor ? 1 : 0);
-
-        // console.log(matrix)
-        gl.uniformMatrix4fv(Uniforms.u_matrix_location, false, matrix);
-
-
-        // Draw the rectangle.
-        const primitiveType = gl.TRIANGLES;
-        const offset = 0;
-        const count = 6;
-        gl.drawArrays(primitiveType, offset, count);
     }
 
     static draw(gl: any, rect: IRectangle, color: IColor) {
@@ -128,11 +104,39 @@ export class Rectangle implements IDrawable {
         const count = 6;
         gl.drawArrays(primitiveType, offset, count);
     }
-}
 
-export interface IRectangle {
-    x: number,
-    y: number,
-    width: number,
-    height: number
+    draw(gl: any) {
+        const rectFront = new Rectangle({x: 0, y: 0, width: 200, height: 200}, Colors.RED).setRotationDegrees({
+            x: 0 + this.rotationDegrees.x,
+            y: 0  + this.rotationDegrees.y,
+            z: 0   + this.rotationDegrees.z
+        }).setTranslation({
+            x: 0 + this.translation.x,
+            y: 0  + this.translation.y,
+            z: 0   + this.translation.z
+        })
+        const rectLeft = new Rectangle({x: 0, y: 0, width: 200, height: 200}, Colors.BLUE).setRotationDegrees({
+            x: 0 + this.rotationDegrees.x,
+            y: 90  + this.rotationDegrees.y,
+            z: 0   + this.rotationDegrees.z
+        }).setTranslation({
+            x: 0 + this.translation.x,
+            y: 0  + this.translation.y,
+            z: 0   + this.translation.z
+        })
+
+        const rectRight = new Rectangle({x: 0, y: 0, width: 200, height: 200}, Colors.BLUE).setRotationDegrees({
+            x: 0 + this.rotationDegrees.x,
+            y: 90  + this.rotationDegrees.y,
+            z: 0   + this.rotationDegrees.z
+        }).setTranslation({
+            x: rectFront.translation.x + 200 + this.translation.x,
+            y: rectFront.translation.y,
+            z: this.translation.z
+        })
+
+        rectFront.draw(gl)
+        rectLeft.draw(gl)
+        rectRight.draw(gl)
+    }
 }

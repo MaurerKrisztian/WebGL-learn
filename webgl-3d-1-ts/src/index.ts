@@ -8,6 +8,8 @@ import vertexShaderStr from './glsl/vertex-shader-2d.glsl';
 import fragmentShaderStr from './glsl/fragment-shader-2d.glsl';
 import { Uniforms } from "./glsl/data/Uniforms";
 import { Debugger } from "./debug/Debugger";
+import { Rectangle3D } from "./shapes/Rectangle3D";
+import { LetterF } from "./shapes/LetterF";
 
 WebGL.init(vertexShaderStr, fragmentShaderStr);
 const gl = WebGL.getWebglContext()
@@ -17,6 +19,7 @@ gl.useProgram(program);
 Attributes.a_position_location = gl.getAttribLocation(program, "a_position");
 Uniforms.u_matrix_location = gl.getUniformLocation(program, "u_matrix")
 Uniforms.u_color_location = gl.getUniformLocation(program, "u_color")
+Uniforms.u_fudgeFactor_location = gl.getUniformLocation(program, "u_fudgeFactor")
 
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -58,7 +61,25 @@ function update() {
     WebGL.initUpdate(gl);
 
     // console.log("degreeeeeeeeeeeeeeeeee: ", degree)
-    const rect = new Rectangle({x: 0, y: 0, width: 150, height: 150}, Colors.BLACK).setTranslation({
+    // const rect = new Rectangle({x: 0, y: 0, width: 150, height: 150}, Colors.BLACK).setTranslation({
+    //     x: debugger1.debugValues.translationX,
+    //     y: debugger1.debugValues.translationY,
+    //     z: debugger1.debugValues.translationZ
+    // }).setRotationDegrees({
+    //     x: debugger1.debugValues.rotationX,
+    //     y: debugger1.debugValues.rotationY,
+    //     z: debugger1.debugValues.rotationZ
+    // }).setScale({
+    //     x: debugger1.debugValues.scaleX,
+    //     y: debugger1.debugValues.scaleY,
+    //     z: debugger1.debugValues.scaleZ
+    // })
+    // renderer.draw(rect)
+
+    //
+    renderer.draw(new Rectangle({x: 0, y: 0, width: 600, height: 260}, Colors.BLUE).setTranslation({x: 100, y: 700, z: 0}))
+    // // renderer.draw(new Triangle({x: 1000, y: 0}, {x: 200, y: 0}, {x: 500, y: 300}, Colors.RED))
+    renderer.draw(new LetterF().setTranslation({
         x: debugger1.debugValues.translationX,
         y: debugger1.debugValues.translationY,
         z: debugger1.debugValues.translationZ
@@ -70,12 +91,21 @@ function update() {
         x: debugger1.debugValues.scaleX,
         y: debugger1.debugValues.scaleY,
         z: debugger1.debugValues.scaleZ
-    })
+    }))
+    // renderer.draw(new Rectangle3D().setTranslation({
+    //     x: debugger1.debugValues.translationX,
+    //     y: debugger1.debugValues.translationY,
+    //     z: debugger1.debugValues.translationZ
+    // }).setRotationDegrees({
+    //     x: debugger1.debugValues.rotationX,
+    //     y: debugger1.debugValues.rotationY,
+    //     z: debugger1.debugValues.rotationZ
+    // }).setScale({
+    //     x: debugger1.debugValues.scaleX,
+    //     y: debugger1.debugValues.scaleY,
+    //     z: debugger1.debugValues.scaleZ
+    // }))
 
-    //
-    renderer.draw(new Rectangle({x: 0, y: 0, width: 600, height: 260}, Colors.BLUE).setTranslation({x: 100, y: 700, z: 0}))
-    // // renderer.draw(new Triangle({x: 1000, y: 0}, {x: 200, y: 0}, {x: 500, y: 300}, Colors.RED))
-    renderer.draw(rect)
     // renderer.draw(new Rectangle({x: 0, y: 0, width: 100, height: 300}, Colors.GREEN).setTranslation({
     //     x: 300,
     //     y: 100

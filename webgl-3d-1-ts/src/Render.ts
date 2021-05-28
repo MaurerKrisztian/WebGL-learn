@@ -1,5 +1,6 @@
 import { WebGL } from "./WebGL";
 import { IDrawable } from "./shapes/Rectangle";
+import { Uniforms } from "./glsl/data/Uniforms";
 
 export class Render {
 
@@ -22,6 +23,7 @@ export class Render {
     }
 
     draw(shape: IDrawable) {
+        this.gl.uniform1f(Uniforms.u_fudgeFactor_location, 1);
         shape.draw(this.gl);
     }
 

@@ -60,7 +60,7 @@ export class Debugger {
         })
 
         slider_scale_z.setCallback(() => {
-            this.debugValues.scaleX = Number.parseFloat(slider_scale_z.getValue())
+            this.debugValues.scaleZ = Number.parseFloat(slider_scale_z.getValue())
         })
     }
 

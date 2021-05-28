@@ -61,4 +61,24 @@ export class Matrix3 {
         ];
     }
 
+    static projection(width, height) {
+        // Note: This matrix flips the Y axis so that 0 is at the top.
+        /*replace this code from vertex shader.. matrix is good :D
+        *
+        * // convert the rectangle from pixels to 0.0 to 1.0
+        * vec2 zeroToOne = position / u_resolution;
+        * // convert from 0->1 to 0->2
+        * vec2 zeroToTwo = zeroToOne * 2.0;
+        * // convert from 0->2 to -1->+1 (clip space)
+        * vec2 clipSpace = zeroToTwo - 1.0;
+        * gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+        * */
+        return [
+            2 / width, 0, 0,
+            0, -2 / height, 0,
+            -1, 1, 1
+        ];
+    }
+
+
 }

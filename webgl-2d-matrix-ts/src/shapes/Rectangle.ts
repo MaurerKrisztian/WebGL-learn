@@ -81,15 +81,17 @@ export class Rectangle implements IDrawable {
         ]), gl.STATIC_DRAW);
     }
 
-    getMatrix() {
+    getMatrix(gl) {
         // Compute the matrices
+        let projectionMatrix = Matrix3.projection(gl.canvas.width, gl.canvas.height)
         const translationMatrix = Matrix3.translation(this.translation.x, this.translation.y);
         const rotationMatrix = Matrix3.rotation(Utils.angleToRadiant(this.rotationDegree));
         const scaleMatrix = Matrix3.scaling(this.scale.x, this.scale.y);
 
 
         // Multiply the matrices.
-        let matrix = Matrix3.multiply(translationMatrix, rotationMatrix);
+        var matrix = Matrix3.multiply(projectionMatrix, translationMatrix);
+        matrix = Matrix3.multiply(matrix, rotationMatrix);
         matrix = Matrix3.multiply(matrix, scaleMatrix);
 
         return matrix;
@@ -97,7 +99,7 @@ export class Rectangle implements IDrawable {
 
     draw(gl: any) {
         Rectangle.setRectangle(gl, this.rect.x, this.rect.y, this.rect.width, this.rect.height);
-        const matrix = this.getMatrix();
+        const matrix = this.getMatrix(gl);
 
         // Set a random color.
         gl.uniform4f(Uniforms.u_color_location, this.color.r, this.color.g, this.color.b, this.color.alpha);
