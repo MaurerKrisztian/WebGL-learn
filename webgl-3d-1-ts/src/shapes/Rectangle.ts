@@ -22,7 +22,7 @@ export class Rectangle implements IDrawable {
                     alpha: 1
                 }, private translation: IPoint3D = {x: 0, y: 0, z: 0},
                 private rotation: IPoint3D = {x: 0, y: 1, z: 0},
-                private scale: IPoint3D = {x: 1, y: 1, z: 0},) {
+                private scale: IPoint3D = {x: 1, y: 1, z: 1},) {
     }
 
     setEnablePathColor(enable: boolean) {
@@ -41,7 +41,6 @@ export class Rectangle implements IDrawable {
     }
 
     setScale(scale: IPoint3D) {
-        console.log(scale)
         this.scale = scale;
         return this;
     }
@@ -93,7 +92,7 @@ export class Rectangle implements IDrawable {
         matrix = Matrix4Multiply.xRotate(matrix, Utils.angleToRadiant(this.rotationDegrees.x));
         matrix = Matrix4Multiply.yRotate(matrix, Utils.angleToRadiant(this.rotationDegrees.y));
         matrix = Matrix4Multiply.zRotate(matrix, Utils.angleToRadiant(this.rotationDegrees.z));
-        matrix = Matrix4Multiply.scale(matrix, scale[0], scale[1], scale[2]);
+        matrix = Matrix4Multiply.scale(matrix, this.scale.x, this.scale.y, this.scale.z);
         return matrix;
     }
 
@@ -106,7 +105,7 @@ export class Rectangle implements IDrawable {
         gl.uniform4fv(Uniforms.u_color_location, [this.color.r, this.color.g, this.color.b, this.color.alpha]);
         // gl.uniform1i(Uniforms.u_enable_path_color_location, this.enablePathColor ? 1 : 0);
 
-        console.log(matrix)
+        // console.log(matrix)
         gl.uniformMatrix4fv(Uniforms.u_matrix_location, false, matrix);
 
 

@@ -1,44 +1,79 @@
-import { Slider } from "../Helpers/Slider";
+import { Slider } from "./Slider";
 
 export class Debugger {
-    constructor() {
+    debugValues : IDebugValues = {
+        translationX: 300,
+        translationY: 100,
+        translationZ: 10,
+         rotationX: 0,
+         rotationY: 0,
+         rotationZ: 0,
+         scaleX: 1,
+         scaleY: 1,
+         scaleZ: 1,
+    }
+
+    constructor(gl) {
+        this.setup(gl)
     }
 
 
     setup(gl) {
 
-        const slider_rotation = new Slider("rotation", -180, 180);
+        const slider_rotation_x = new Slider("rotationX", 0, 360);
+        const slider_rotation_y = new Slider("rotationY", 0, 360);
+        const slider_rotation_z = new Slider("rotationZ", 0, 360);
         const slider_translation_x = new Slider("translation x", 1, gl.canvas.width);
         const slider_translation_y = new Slider("translation y", 1, gl.canvas.height);
-        const slider_translation_z = new Slider("translation z", 1, gl.canvas.height);
-        const slider_scale = new Slider("scale", 1, 5);
+        const slider_translation_z = new Slider("translation z", 0, gl.canvas.height);
+        const slider_scale_x = new Slider("scale x", 1, 5);
+        const slider_scale_y = new Slider("scale y", 1, 5);
+        const slider_scale_z = new Slider("scale z", 1, 5);
 
-        slider_rotation.setCallback(() => {
-            degree = Number.parseFloat(slider_rotation.getValue())
-            console.log("rotatoion... ", degree)
+
+        slider_rotation_x.setCallback(() => {
+            this.debugValues.rotationX = Number.parseFloat(slider_rotation_x.getValue())
+        })
+        slider_rotation_y.setCallback(() => {
+            this.debugValues.rotationY = Number.parseFloat(slider_rotation_y.getValue())
+        })
+        slider_rotation_z.setCallback(() => {
+            this.debugValues.rotationZ = Number.parseFloat(slider_rotation_z.getValue())
         })
 
         slider_translation_x.setCallback(() => {
-            rectPosX = Number.parseFloat(slider_translation_x.getValue())
+            this.debugValues.translationX = Number.parseFloat(slider_translation_x.getValue())
         })
         slider_translation_y.setCallback(() => {
-            rectPosY = Number.parseFloat(slider_translation_y.getValue())
+            this.debugValues.translationY = Number.parseFloat(slider_translation_y.getValue())
         })
-        slider_scale.setCallback(() => {
-            scale = Number.parseFloat(slider_scale.getValue())
-        })
+
         slider_translation_z.setCallback(() => {
-            rectPosZ = Number.parseFloat(slider_scale.getValue())
+            this.debugValues.translationZ = Number.parseFloat(slider_translation_z.getValue())
         })
 
-        let rectPosX = 10;
-        let rectPosY = 10
-        let rectPosZ = 10
-        let degree = 0
-        let scale = 1
+        slider_scale_x.setCallback(() => {
+            this.debugValues.scaleX = Number.parseFloat(slider_scale_x.getValue())
+        })
+        slider_scale_y.setCallback(() => {
+            this.debugValues.scaleY = Number.parseFloat(slider_scale_y.getValue())
+        })
+
+        slider_scale_z.setCallback(() => {
+            this.debugValues.scaleX = Number.parseFloat(slider_scale_z.getValue())
+        })
     }
 
-    getValues() {
+}
 
-    }
+export interface IDebugValues {
+    translationX: number;
+    translationY: number
+    translationZ: number
+    rotationX: number,
+    rotationY: number,
+    rotationZ: number,
+    scaleX: number,
+    scaleY: number,
+    scaleZ: number,
 }
