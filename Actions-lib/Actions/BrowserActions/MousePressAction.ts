@@ -6,7 +6,6 @@ export class MousePressAction implements IAction {
 
     setup(): any {
         document.addEventListener('mousedown', function (event: MouseEvent) {
-            // console.log('mousedown', event)
             Observables.MousePressObservable.notify(event, "MousePressAction")
         }, false);
     }

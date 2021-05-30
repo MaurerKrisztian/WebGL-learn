@@ -14,7 +14,6 @@ export class DragAction implements IAction, IObserver<any> {
     }
 
     update(data: MouseEvent, channel?: string): void {
-        console.log("channnellllllllll", channel)
         switch (channel) {
             case "MousePressAction":
                 this.data = {
@@ -38,15 +37,13 @@ export class DragAction implements IAction, IObserver<any> {
                     x: (this.data.current.x - this.data.previous.x),
                     y: (this.data.current.y - this.data.previous.y),
                 }
-                console.log(this.data)
 
                 if (this.isChangedPos()) {
-                    console.log("send updateeeeeeeeeeeeeeeeeeeeeeeeee", channel)
                     Observables.MouseDragObservable.notify(this.data, DragAction.channel);
                 }
                 break;
             default:
-                console.log("cant hadle channel " + channel)
+                console.error("cant hadle channel " + channel)
                 break
         }
     }

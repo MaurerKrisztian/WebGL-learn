@@ -16,10 +16,7 @@ export class KeyDownAction implements IAction{
                 const notifyData: IKeyDownData = {
                     key: event.key
                 }
-
                 Observables.KeyDownObservable.notify(notifyData, KeyDownAction.channel)
-
-                console.log(notifyData)
             }, false);
 
     }
