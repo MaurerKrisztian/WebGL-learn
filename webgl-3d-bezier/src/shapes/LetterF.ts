@@ -6,6 +6,7 @@ import { Utils } from "../math/Utils";
 import { Matrix4 } from "../../../Math-lib/src/Matrix/Matrix4";
 import { Attributes } from "../glsl/data/Attributes";
 import { Buffers } from "../glsl/data/Buffers";
+import { Values } from "../glsl/data/Values";
 
 export class LetterF {
 
@@ -80,7 +81,10 @@ export class LetterF {
 
     draw(gl: any) {
         LetterF.setGeometry(gl);
-        LetterF.setColors(gl);
+        LetterF.setTexcoords(gl)
+        // LetterF.setColors(gl);
+
+        gl.uniform1i(Uniforms.u_texture_location, 0);
 
         // Compute the matrices
         var matrix = this.getMatrix(gl)
@@ -88,50 +92,37 @@ export class LetterF {
         // Set the matrix.
         gl.uniformMatrix4fv(Uniforms.u_matrix_location, false, matrix);
 
+
         // Draw the geometry.
         var primitiveType = gl.TRIANGLES;
         var offset = 0;
         var count = 16 * 6;
         gl.drawArrays(primitiveType, offset, count);
+
     }
 
+    static setTexcoords(gl) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, Buffers.texcoordBuffer);
 
-    static drawGeometryBuffer(gl, positionBuffer) {
-        LetterF.setGeometry(gl);
-        // Turn on the position attribute
-        gl.enableVertexAttribArray(Attributes.a_position_location);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array(Values.texturesArr),
+            gl.STATIC_DRAW);
 
-        // Bind the position buffer.
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.enableVertexAttribArray(Attributes.a_texcoord_location);
+        // bind the texcoord buffer.
+        gl.bindBuffer(gl.ARRAY_BUFFER, Buffers.texcoordBuffer);
 
-        // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-        var size = 3;          // 3 components per iteration
+        // Tell the texcoord attribute how to get data out of texcoordBuffer (ARRAY_BUFFER)
+        var size = 2;          // 2 components per iteration
         var type = gl.FLOAT;   // the data is 32bit floats
         var normalize = false; // don't normalize the data
         var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
         var offset = 0;        // start at the beginning of the buffer
         gl.vertexAttribPointer(
-            Attributes.a_position_location, size, type, normalize, stride, offset);
+            Attributes.a_texcoord_location, size, type, normalize, stride, offset);
     }
 
-    static drawColorBuffer(gl, colorBuffer) {
-        LetterF.setColors(gl);
-
-        // Turn on the color attribute
-        gl.enableVertexAttribArray(Attributes.a_color_location);
-
-        // Bind the color buffer.
-        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-
-        // Tell the attribute how to get data out of colorBuffer (ARRAY_BUFFER)
-        var size = 3;                 // 3 components per iteration
-        var type = gl.UNSIGNED_BYTE;  // the data is 8bit unsigned values
-        var normalize = true;         // normalize the data (convert from 0-255 to 0-1)
-        var stride = 0;               // 0 = move forward size * sizeof(type) each iteration to get the next position
-        var offset = 0;               // start at the beginning of the buffer
-        gl.vertexAttribPointer(
-            Attributes.a_color_location, size, type, normalize, stride, offset);
-    }
 
     // Fill the buffer with the values that define a letter 'F'.
     static setGeometry(gl) {
@@ -140,134 +131,7 @@ export class LetterF {
 
         gl.bufferData(
             gl.ARRAY_BUFFER,
-            new Float32Array([
-                // left column front
-                0, 0, 0,
-                0, 150, 0,
-                30, 0, 0,
-                0, 150, 0,
-                30, 150, 0,
-                30, 0, 0,
-
-                // top rung front
-                30, 0, 0,
-                30, 30, 0,
-                100, 0, 0,
-                30, 30, 0,
-                100, 30, 0,
-                100, 0, 0,
-
-                // middle rung front
-                30, 60, 0,
-                30, 90, 0,
-                67, 60, 0,
-                30, 90, 0,
-                67, 90, 0,
-                67, 60, 0,
-
-                // left column back
-                0, 0, 30,
-                30, 0, 30,
-                0, 150, 30,
-                0, 150, 30,
-                30, 0, 30,
-                30, 150, 30,
-
-                // top rung back
-                30, 0, 30,
-                100, 0, 30,
-                30, 30, 30,
-                30, 30, 30,
-                100, 0, 30,
-                100, 30, 30,
-
-                // middle rung back
-                30, 60, 30,
-                67, 60, 30,
-                30, 90, 30,
-                30, 90, 30,
-                67, 60, 30,
-                67, 90, 30,
-
-                // top
-                0, 0, 0,
-                100, 0, 0,
-                100, 0, 30,
-                0, 0, 0,
-                100, 0, 30,
-                0, 0, 30,
-
-                // top rung right
-                100, 0, 0,
-                100, 30, 0,
-                100, 30, 30,
-                100, 0, 0,
-                100, 30, 30,
-                100, 0, 30,
-
-                // under top rung
-                30, 30, 0,
-                30, 30, 30,
-                100, 30, 30,
-                30, 30, 0,
-                100, 30, 30,
-                100, 30, 0,
-
-                // between top rung and middle
-                30, 30, 0,
-                30, 60, 30,
-                30, 30, 30,
-                30, 30, 0,
-                30, 60, 0,
-                30, 60, 30,
-
-                // top of middle rung
-                30, 60, 0,
-                67, 60, 30,
-                30, 60, 30,
-                30, 60, 0,
-                67, 60, 0,
-                67, 60, 30,
-
-                // right of middle rung
-                67, 60, 0,
-                67, 90, 30,
-                67, 60, 30,
-                67, 60, 0,
-                67, 90, 0,
-                67, 90, 30,
-
-                // bottom of middle rung.
-                30, 90, 0,
-                30, 90, 30,
-                67, 90, 30,
-                30, 90, 0,
-                67, 90, 30,
-                67, 90, 0,
-
-                // right of bottom
-                30, 90, 0,
-                30, 150, 30,
-                30, 90, 30,
-                30, 90, 0,
-                30, 150, 0,
-                30, 150, 30,
-
-                // bottom
-                0, 150, 0,
-                0, 150, 30,
-                30, 150, 30,
-                0, 150, 0,
-                30, 150, 30,
-                30, 150, 0,
-
-                // left side
-                0, 0, 0,
-                0, 0, 30,
-                0, 150, 30,
-                0, 0, 0,
-                0, 150, 30,
-                0, 150, 0]),
+            new Float32Array(Values.vertexArr),
             gl.STATIC_DRAW);
 
 
@@ -275,7 +139,7 @@ export class LetterF {
         gl.enableVertexAttribArray(Attributes.a_position_location);
 
         // Bind the position buffer.
-        // gl.bindBuffer(gl.ARRAY_BUFFER, Buffers.positionBuffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, Buffers.positionBuffer);
 
         // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
         var size = 3;          // 3 components per iteration

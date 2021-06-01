@@ -1,7 +1,3 @@
-/*
-* 3D matrix
-* */
-
 export class Matrix4 {
     constructor() {
     }
@@ -16,8 +12,8 @@ export class Matrix4 {
     }
 
     static xRotation(angleInRadians) {
-        const c = Math.cos(angleInRadians);
-        const s = Math.sin(angleInRadians);
+        var c = Math.cos(angleInRadians);
+        var s = Math.sin(angleInRadians);
 
         return [
             1, 0, 0, 0,
@@ -28,8 +24,8 @@ export class Matrix4 {
     }
 
     static yRotation(angleInRadians) {
-        const c = Math.cos(angleInRadians);
-        const s = Math.sin(angleInRadians);
+        var c = Math.cos(angleInRadians);
+        var s = Math.sin(angleInRadians);
 
         return [
             c, 0, -s, 0,
@@ -121,64 +117,6 @@ export class Matrix4 {
             0, -2 / height, 0, 0,
             0, 0, 2 / depth, 0,
             -1, 1, 0, 1,
-        ];
-    }
-
-    static transformPoint(m, v, dst?: any) {
-        dst = dst || new Float32Array(3);
-        var v0 = v[0];
-        var v1 = v[1];
-        var v2 = v[2];
-        var d = v0 * m[0 * 4 + 3] + v1 * m[1 * 4 + 3] + v2 * m[2 * 4 + 3] + m[3 * 4 + 3];
-
-        dst[0] = (v0 * m[0 * 4 + 0] + v1 * m[1 * 4 + 0] + v2 * m[2 * 4 + 0] + m[3 * 4 + 0]) / d;
-        dst[1] = (v0 * m[0 * 4 + 1] + v1 * m[1 * 4 + 1] + v2 * m[2 * 4 + 1] + m[3 * 4 + 1]) / d;
-        dst[2] = (v0 * m[0 * 4 + 2] + v1 * m[1 * 4 + 2] + v2 * m[2 * 4 + 2] + m[3 * 4 + 2]) / d;
-
-        return dst;
-    }
-
-    static identity(dst?: any) {
-        dst = dst || new Float32Array(16);
-
-        dst[ 0] = 1;
-        dst[ 1] = 0;
-        dst[ 2] = 0;
-        dst[ 3] = 0;
-        dst[ 4] = 0;
-        dst[ 5] = 1;
-        dst[ 6] = 0;
-        dst[ 7] = 0;
-        dst[ 8] = 0;
-        dst[ 9] = 0;
-        dst[10] = 1;
-        dst[11] = 0;
-        dst[12] = 0;
-        dst[13] = 0;
-        dst[14] = 0;
-        dst[15] = 1;
-
-        return dst;
-    }
-
-    static perspective(fieldOfViewInRadians, aspect, near, far) {
-        var f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewInRadians);
-        var rangeInv = 1.0 / (near - far);
-
-        return [
-            f / aspect, 0, 0, 0,
-            0, f, 0, 0,
-            0, 0, (near + far) * rangeInv, -1,
-            0, 0, near * far * rangeInv * 2, 0
-        ];
-    }
-
-    static makeZToWMatrix(fudgeFactor) {
-        return [
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, fudgeFactor,
-            0, 0, 0, 1,
         ];
     }
 

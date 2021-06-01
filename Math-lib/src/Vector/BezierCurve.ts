@@ -156,7 +156,7 @@ export class BezierCurve {
                 texcoords.push(u, 0);
             }
             points.forEach((p, ndx) => {
-                const tp = Matrix4.transformPoint(mat, [...p, 0]); // idk
+                const tp = Matrix4.transformPoint(mat, [...p, 0]);
                 positions.push(tp[0], tp[1], tp[2]);
                 const v = (ndx + vOffset) / quadsDown;
                 texcoords.push(u, v);
