@@ -6,8 +6,8 @@ import { Utils } from "../math/Utils";
 export class Debugger {
     debugValues: IDebugValues = {
         translationX: -150,
-        translationY: 0,
-        translationZ: -360,
+        translationY: 200,
+        translationZ: -800,
         rotationX: 190,
         rotationY: 40,
         rotationZ: 320,

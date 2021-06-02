@@ -1,83 +1,16 @@
-import { IPoint3D } from "../math/Interfaces";
-import { IColor } from "../Render";
-import { Matrix4Multiply } from "../math/Matrix4Multiply";
 import { Uniforms } from "../glsl/data/Uniforms";
-import { Utils } from "../math/Utils";
-import { Matrix4 } from "../../../Math-lib/src/Matrix/Matrix4";
 import { Attributes } from "../glsl/data/Attributes";
 import { Buffers } from "../glsl/data/Buffers";
 import { Values } from "../glsl/data/Values";
+import { Transformation } from "../core/Transformation";
 
 export class LetterF {
 
-    rotationDegrees: IPoint3D = {x: 1, y: 1, z: 1}
-
-    enablePathColor = false;
 
     constructor(
-        private readonly color: IColor = {
-            r: 0,
-            g: 0,
-            b: 0,
-            alpha: 1
-        }, private translation: IPoint3D = {x: 0, y: 0, z: 0},
-        private rotation: IPoint3D = {x: 0, y: 1, z: 0},
-        private scale: IPoint3D = {x: 1, y: 1, z: 1},) {
+        public transformation: Transformation = new Transformation()) {
     }
 
-    setEnablePathColor(enable: boolean) {
-        this.enablePathColor = enable;
-        return this
-    }
-
-    setTranslation(translation: IPoint3D): this {
-        this.translation = translation
-        return this
-    }
-
-    setRotation(rotation: IPoint3D) {
-        this.rotation = rotation;
-        return this;
-    }
-
-    setScale(scale: IPoint3D) {
-        this.scale = scale;
-        return this;
-    }
-
-    getScaleArray() {
-        return [this.scale.x, this.scale.y]
-    }
-
-    setRotationDegrees(degrees: IPoint3D) {
-        this.rotationDegrees = degrees
-        return this
-    }
-
-    getTranslationArray() {
-        return [this.translation.x, this.translation.y]
-    }
-
-    getRotationArray() {
-        return [this.rotation.x, this.rotation.y]
-    }
-
-
-    getMatrix(gl) {
-        var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-        var zNear = 1;
-        var zFar = 2000;
-        var fieldOfViewRadians = Utils.angleToRadiant(60);
-
-        // Compute the matrices
-        var matrix = Matrix4.perspective(fieldOfViewRadians, aspect, zNear, zFar);
-        matrix = Matrix4Multiply.translate(matrix, this.translation.x, this.translation.y, this.translation.z);
-        matrix = Matrix4Multiply.xRotate(matrix, Utils.angleToRadiant(this.rotationDegrees.x));
-        matrix = Matrix4Multiply.yRotate(matrix, Utils.angleToRadiant(this.rotationDegrees.y));
-        matrix = Matrix4Multiply.zRotate(matrix, Utils.angleToRadiant(this.rotationDegrees.z));
-        matrix = Matrix4Multiply.scale(matrix, this.scale.x, this.scale.y, this.scale.z);
-        return matrix;
-    }
 
     draw(gl: any) {
         LetterF.setGeometry(gl);
@@ -87,7 +20,7 @@ export class LetterF {
         gl.uniform1i(Uniforms.u_texture_location, 0);
 
         // Compute the matrices
-        var matrix = this.getMatrix(gl)
+        const matrix = this.transformation.getMatrix(gl)
 
         // Set the matrix.
         gl.uniformMatrix4fv(Uniforms.u_matrix_location, false, matrix);

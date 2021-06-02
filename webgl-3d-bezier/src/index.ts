@@ -8,7 +8,7 @@ import { Uniforms } from "./glsl/data/Uniforms";
 import { Debugger } from "./debug/Debugger";
 import { LetterF } from "./shapes/LetterF";
 import { Buffers } from "./glsl/data/Buffers";
-import { TextureLoader } from "./TextureLoader";
+import { TextureLoader } from "./core/TextureLoader";
 import { BezierLathe } from "./shapes/BezierLathe";
 
 WebGL.init(vertexShaderStr, fragmentShaderStr);
@@ -28,7 +28,9 @@ TextureLoader.loadTexture(gl, "/src/resources/minecraft.jpg")
 
 const renderer = new Render(gl);
 const debugger1 = new Debugger(gl);
-const letterF = new LetterF().setTranslation({
+const letterF = new LetterF()
+
+letterF.transformation.setTranslation({
     x: debugger1.debugValues.translationX,
     y: debugger1.debugValues.translationY,
     z: debugger1.debugValues.translationZ
@@ -42,30 +44,17 @@ const letterF = new LetterF().setTranslation({
     z: debugger1.debugValues.scaleZ
 })
 
-const bezier = new BezierLathe(gl);
+const bezier = new BezierLathe("m44,434c18,-33 19,-66 15,-111c-4,-45 -37,-104 -39,-132c-2,-28 11,-51 16,-81c5,-30 3,-63 -36,-100");
 drawScene()
 
 
 function drawScene() {
     WebGL.initUpdate(gl);
 
-    // letterF.setTranslation({
-    //     x: debugger1.debugValues.translationX,
-    //     y: debugger1.debugValues.translationY,
-    //     z: debugger1.debugValues.translationZ
-    // }).setRotationDegrees({
-    //     x: debugger1.debugValues.rotationX,
-    //     y: debugger1.debugValues.rotationY,
-    //     z: debugger1.debugValues.rotationZ
-    // }).setScale({
-    //     x: debugger1.debugValues.scaleX,
-    //     y: debugger1.debugValues.scaleY,
-    //     z: debugger1.debugValues.scaleZ
-    // })
     // renderer.draw(letterF)
-    // //
-    // // LetterF.setTexcoords(gl)
-    renderer.draw(bezier.setTranslation({
+
+
+    bezier.transformation.setTranslation({
         x: debugger1.debugValues.translationX,
         y: debugger1.debugValues.translationY,
         z: debugger1.debugValues.translationZ
@@ -77,8 +66,8 @@ function drawScene() {
         x: debugger1.debugValues.scaleX,
         y: debugger1.debugValues.scaleY,
         z: debugger1.debugValues.scaleZ
-    }))
-// renderer.draw(bezier)
+    })
+renderer.draw(bezier)
 
 
     requestAnimationFrame(drawScene)

@@ -1,5 +1,5 @@
 import { IDrawable, IRectangle, Rectangle } from "./Rectangle";
-import { Colors } from "../Colors";
+import { Colors } from "../core/Colors";
 import { IPoint3D } from "../math/Interfaces";
 import { IColor } from "../Render";
 import { Matrix4 } from "../math/Matrix4";
