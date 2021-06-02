@@ -31,7 +31,7 @@ export class Debugger {
         const slider_rotation_z = new Slider("rotationZ", 0, 360);
         const slider_translation_x = new Slider("translation x", -500, gl.canvas.width);
         const slider_translation_y = new Slider("translation y", -500, gl.canvas.height);
-        const slider_translation_z = new Slider("translation z", -500, gl.canvas.height);
+        const slider_translation_z = new Slider("translation z", -800, gl.canvas.height);
         const slider_scale_x = new Slider("scale x", 1, 5);
         const slider_scale_y = new Slider("scale y", 1, 5);
         const slider_scale_z = new Slider("scale z", 1, 5);

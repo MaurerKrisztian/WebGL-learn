@@ -1,15 +1,17 @@
 import { BezierCurve } from "../../../Math-lib/src/Vector/BezierCurve";
 import { Helpers } from "../../../Math-lib/src/Vector/Helpers";
 import { Matrix4 } from "../../../Math-lib/src/Matrix/Matrix4";
-import { Matrix4Multiply } from "../math/Matrix4Multiply";
 import { Utils } from "../../../Math-lib/src/Matrix/Utils";
 import { IColor } from "../Render";
 import { IPoint3D } from "../math/Interfaces";
 import { Uniforms } from "../glsl/data/Uniforms";
 import { IDrawable } from "./Rectangle";
-import { WebGL } from "../WebGL";
-import { Attributes } from "../glsl/data/Attributes";
 import { TextureLoader } from "../TextureLoader";
+import { Vector2 } from "../../../Math-lib/src/Vector/Vector2";
+import { WebGL } from "../WebGL";
+import { Matrix4Multiply } from "../math/Matrix4Multiply";
+import { Values } from "../glsl/data/Values";
+import { Attributes } from "../glsl/data/Attributes";
 import { Buffers } from "../glsl/data/Buffers";
 
 
@@ -46,11 +48,15 @@ export class BezierLathe implements IDrawable {
     texInfo
 
     constructor(private readonly gl) {
-        let svg = "m44,434c18,-33 19,-66 15,-111c-4,-45 -37,-104 -39,-132c-2,-28 11,-51 16,-81c5,-30 3,-63 -36,-63";
+        const testSvg = "m44,434c18,-33 19,-66 15,-111c-4,-45 -37,-104 -39,-132c-2,-28 11,-51 16,-81c5,-30 3,-63 -36,-100"
+        let svg = "M 332, 714 C 73, 773, 500, 100, 171, 429";
         this.curvePoints = Utils.parseSVGPath(svg);
+        console.log(this.curvePoints)
+        // this.curvePoints[0] = [10, 500]
         console.log("pointssssss ", this.curvePoints)
-        this.texInfo = TextureLoader.loadImageAndCreateTextureInfo(gl,"/src/resources/uv-grid.png",  ()=>{});
-
+        this.texInfo = TextureLoader.loadImageAndCreateTextureInfo(gl, "/src/resources/uv-grid.png", () => {
+        });
+        console.log("texture inf", this.texInfo)
     }
 
 
@@ -78,45 +84,58 @@ export class BezierLathe implements IDrawable {
         return this
     }
 
-    generateMesh(bufferInfo) {
+    generateMesh(gl) {
         // console.log(bufferInfo)
-        const gl = this.gl;
         const data = this.data
 
         const tempPoints = BezierCurve.getPointsOnBezierCurves(this.curvePoints, data.tolerance);
         const points = BezierCurve.simplifyPoints(tempPoints, 0, tempPoints.length, data.distance);
         const arrays = BezierCurve.lathePoints(points, data.startAngle, data.endAngle, data.divisions, data.capStart, data.capEnd);
         const extents = Helpers.getExtents(arrays.position);
-        if (!bufferInfo) {
-            // calls gl.createBuffer, gl.bindBuffer, and gl.bufferData for each array
-            // console.log("!bufferInfo", webglUtils.createBufferInfoFromArrays(gl, arrays))
-            bufferInfo = webglUtils.createBufferInfoFromArrays(gl, arrays);
-        } else {
-            gl.bindBuffer(gl.ARRAY_BUFFER, Buffers.positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arrays.position), gl.STATIC_DRAW);
-            // gl.bindBuffer(gl.ARRAY_BUFFER, bufferInfo.attribs.a_texcoord.buffer);
-            // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arrays.texcoord), gl.STATIC_DRAW);
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferInfo.indices);
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(arrays.indices), gl.STATIC_DRAW);
-            bufferInfo.numElements = arrays.indices.length;
-        }
-        return {
-            bufferInfo: bufferInfo,
-            extents: extents,
-        };
-    }
 
-    update() {
-        const info = this.generateMesh(this.bufferInfo);
-        this.extents = info.extents;
-        this.bufferInfo = info.bufferInfo;
-        // this.render();
+        gl.bindBuffer(gl.ARRAY_BUFFER, Buffers.positionBuffer);
+
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array(arrays.position),
+            gl.STATIC_DRAW);
+
+
+        // Turn on the position attribute
+        gl.enableVertexAttribArray(Attributes.a_position_location);
+
+        // Bind the position buffer.
+        gl.bindBuffer(gl.ARRAY_BUFFER, Buffers.positionBuffer);
+
+        // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
+        var size = 3;          // 3 components per iteration
+        var type = gl.FLOAT;   // the data is 32bit floats
+        var normalize = false; // don't normalize the data
+        var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+        var offset = 0;        // start at the beginning of the buffer
+        gl.vertexAttribPointer(
+            Attributes.a_position_location, size, type, normalize, stride, offset);
+
+        // create the buffer
+        const indexBuffer = gl.createBuffer();
+
+// make this buffer the current 'ELEMENT_ARRAY_BUFFER'
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+        gl.bufferData(
+            gl.ELEMENT_ARRAY_BUFFER,
+            new Uint16Array(arrays.indices),
+            gl.STATIC_DRAW
+        );
+
+        // console.log(arrays)
+        return arrays
     }
 
     getMatrix(gl) {
         var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
         var zNear = 1;
-        var zFar = 2000;
+        var zFar = 20000;
         var fieldOfViewRadians = Utils.angleToRadiant(60);
 
         // Compute the matrices
@@ -126,64 +145,25 @@ export class BezierLathe implements IDrawable {
         matrix = Matrix4Multiply.yRotate(matrix, Utils.angleToRadiant(this.rotationDegrees.y));
         matrix = Matrix4Multiply.zRotate(matrix, Utils.angleToRadiant(this.rotationDegrees.z));
         matrix = Matrix4Multiply.scale(matrix, this.scale.x, this.scale.y, this.scale.z);
-
-        // console.log(this)
         return matrix;
     }
 
 
-    render() {
-        // console.log(this.gl)
-        const gl = this.gl
-        gl.uniform1i(Uniforms.u_texture_location, 0);
-//
-//         gl.enable(gl.DEPTH_TEST);
-//         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-//
-//         gl.enableVertexAttribArray(Attributes.a_position_location); // turn the attribute on
-// gl.enableVertexAttribArray(Uniforms.u_resolution_location); // turn the attribute on
-//
-//         gl.useProgram(WebGL.getProgram().program);
+    render(gl) {
+        // gl.uniform1i(Uniforms.u_texture_location, 0);
+        const meshinfos = this.generateMesh(gl)
 
-        // Setup all the needed attributes.
-        // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer for each attribute
-        // webglUtils.setBuffersAndAttributes(gl, WebGL.getProgram(), this.bufferInfo);
-
-        // webglUtils.resizeCanvasToDisplaySize(gl.canvas, window.devicePixelRatio);
-        //
-        // // Tell WebGL how to convert from clip space to pixels
-        // gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        // gl.enable(gl.DEPTH_TEST);
-        //
-        // // Clear the canvas AND the depth buffer.
-        // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-
-        const matrix = this.getMatrix(gl);
-
-        // gl.enable(gl.DEPTH_TEST);
-        this.update()
-
-        // Set a random color.
-        var color = [Math.random(), Math.random(), Math.random(), 1];
-        // gl.uniform4fv(Uniforms.u_color_location, color);
-        // gl.uniform1i(Uniforms.u_enable_path_color_location, this.enablePathColor ? 1 : 0);
-
-        // console.log(matrix)
+        var matrix = this.getMatrix(gl)
         gl.uniformMatrix4fv(Uniforms.u_matrix_location, false, matrix);
 
-        // calls gl.drawArrays or gl.drawElements.
-        // console.log("bufferinfo : ", this.bufferInfo)
-        // webglUtils.setBuffersAndAttributes(gl, WebGL.getProgram(), this.bufferInfo);
-        //
-        // webglUtils.setUniforms(WebGL.getProgram(), {
-        //     u_matrix: matrix,
-        //     u_texture: this.texInfo.texture,
-        // });
 
 
-        // Utils.drawBufferInfo(gl, this.bufferInfo, this,this.data.triangles ? gl.TRIANGLE : gl.LINES);
-        this.drawTriangles(gl, this.bufferInfo)
+        // Draw the geometry.
+        var primitiveType = gl.LINES;
+        var offset = 0;
+        var count =  meshinfos.indices.length;
+        var indexType = gl.UNSIGNED_SHORT;
+        gl.drawElements(primitiveType, count, indexType, offset);
 
 
     }
@@ -205,8 +185,18 @@ export class BezierLathe implements IDrawable {
     }
 
     draw(gl: any): any {
-        this.render()
+       this.render(gl)
     }
 
+
+    getProgramInfo(gl, program) {
+        const uniformSetters = webglUtils.createUniformSetters(gl, program);
+        const attribSetters = webglUtils.createAttributeSetters(gl, program);
+        return {
+            program: program,
+            uniformSetters: uniformSetters,
+            attribSetters: attribSetters,
+        };
+    }
 }
 

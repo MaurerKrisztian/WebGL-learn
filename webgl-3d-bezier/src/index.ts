@@ -62,6 +62,7 @@ function drawScene() {
     //     y: debugger1.debugValues.scaleY,
     //     z: debugger1.debugValues.scaleZ
     // })
+    // renderer.draw(letterF)
     // //
     // // LetterF.setTexcoords(gl)
     renderer.draw(bezier.setTranslation({
@@ -77,6 +78,7 @@ function drawScene() {
         y: debugger1.debugValues.scaleY,
         z: debugger1.debugValues.scaleZ
     }))
+// renderer.draw(bezier)
 
 
     requestAnimationFrame(drawScene)
