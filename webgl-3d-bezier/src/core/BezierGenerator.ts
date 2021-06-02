@@ -3,7 +3,7 @@ import { BezierCurve } from "../../../Math-lib/src/Vector/BezierCurve";
 import { Helpers } from "../../../Math-lib/src/Vector/Helpers";
 import { Buffers } from "../glsl/data/Buffers";
 import { Attributes } from "../glsl/data/Attributes";
-import { IColor } from "../Render";
+import { IColor } from "./Render";
 import { Colors } from "./Colors";
 
 export class BezierGenerator {
@@ -13,8 +13,8 @@ export class BezierGenerator {
         divisions: 16,
         startAngle: 0,
         endAngle: Math.PI * 2,
-        capStart: true,
-        capEnd: true,
+        capStart: false,
+        capEnd: false,
         triangles: false
     }, public curvePoints: number[] = []) {
     }
@@ -24,7 +24,6 @@ export class BezierGenerator {
     }
 
     setTextureColor(gl, color: IColor = Colors.BLUE) {
-        console.log(color)
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
             new Uint8Array([color.r, color.g, color.b, color.alpha]));
     }

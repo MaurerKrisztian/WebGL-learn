@@ -1,3 +1,7 @@
+import { Buffers } from "../glsl/data/Buffers";
+import { Values } from "../glsl/data/Values";
+import { Attributes } from "../glsl/data/Attributes";
+
 export class TextureLoader {
 
     static loadTexture(gl, src: string) {
@@ -24,6 +28,29 @@ export class TextureLoader {
         });
 
         return texture
+    }
+
+
+    static setTexcoords(gl, coord) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, Buffers.texcoordBuffer);
+
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array(coord),
+            gl.STATIC_DRAW);
+
+        gl.enableVertexAttribArray(Attributes.a_texcoord_location);
+        // bind the texcoord buffer.
+        gl.bindBuffer(gl.ARRAY_BUFFER, Buffers.texcoordBuffer);
+
+        // Tell the texcoord attribute how to get data out of texcoordBuffer (ARRAY_BUFFER)
+        var size = 2;          // 2 components per iteration
+        var type = gl.FLOAT;   // the data is 32bit floats
+        var normalize = false; // don't normalize the data
+        var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+        var offset = 0;        // start at the beginning of the buffer
+        gl.vertexAttribPointer(
+            Attributes.a_texcoord_location, size, type, normalize, stride, offset);
     }
 
     static loadImageAndCreateTextureInfo(gl, url, callback) {

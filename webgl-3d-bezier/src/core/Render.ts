@@ -1,6 +1,5 @@
-import { WebGL } from "./WebGL";
-import { IDrawable } from "./shapes/Rectangle";
-import { Uniforms } from "./glsl/data/Uniforms";
+import { WebGL } from "../WebGL";
+import { IDrawable } from "../shapes/Rectangle";
 
 export class Render {
 

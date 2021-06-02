@@ -1,4 +1,4 @@
-import { IColor } from "../Render";
+import { IColor } from "../core/Render";
 import { Uniforms } from "../glsl/data/Uniforms";
 import { IPoint3D } from "../math/Interfaces";
 import { Utils } from "../math/Utils";

@@ -11,7 +11,7 @@ export class Slider {
         this.getSlider(id)
         this.slider.min = min+ ".0";
         this.slider.max = max+ ".0";
-        this.slider.step = "0.1"
+        this.slider.step = step.toString()
         this.slider.value = step.toString() || "0.1"
     }
 

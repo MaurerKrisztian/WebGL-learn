@@ -1,4 +1,4 @@
-import { IColor } from "../Render";
+import { IColor } from "./Render";
 
 export class Colors {
     static RED: IColor = {r: 255, g: 0, b: 0, alpha: 255}

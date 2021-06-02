@@ -1,4 +1,4 @@
-import { IColor } from "../Render";
+import { IColor } from "./Render";
 import { IPoint3D } from "../math/Interfaces";
 import { Utils } from "../../../Math-lib/src/Matrix/Utils";
 import { Matrix4 } from "../../../Math-lib/src/Matrix/Matrix4";
@@ -44,10 +44,9 @@ export class Transformation {
     }
 
     getMatrix(gl, zNear = 1, zFar = 2000, fieldOfViewDegree = 60, aspect: number = gl.canvas.clientWidth / gl.canvas.clientHeight) {
-        var fieldOfViewRadians = Utils.angleToRadiant(fieldOfViewDegree);
+        const fieldOfViewRadians = Utils.angleToRadiant(fieldOfViewDegree);
 
-
-        var matrix = Matrix4.perspective(fieldOfViewRadians, aspect, zNear, zFar);
+        let matrix = Matrix4.perspective(fieldOfViewRadians, aspect, zNear, zFar);
         matrix = Matrix4Multiply.translate(matrix, this.translation.x, this.translation.y, this.translation.z);
         matrix = Matrix4Multiply.xRotate(matrix, this.rotationInRadiant.x);
         matrix = Matrix4Multiply.yRotate(matrix, this.rotationInRadiant.y);
