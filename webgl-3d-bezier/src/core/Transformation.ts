@@ -1,7 +1,7 @@
 import { IColor } from "./Render";
 import { IPoint3D } from "../math/Interfaces";
-import { Utils } from "../../../Math-lib/src/Matrix/Utils";
-import { Matrix4 } from "../../../Math-lib/src/Matrix/Matrix4";
+import { Utils } from "../../../Math-lib/src/Utils";
+import { Matrix4 } from "../../../Math-lib/src/3D/Matrix4";
 import { Matrix4Multiply } from "../math/Matrix4Multiply";
 
 export class Transformation {

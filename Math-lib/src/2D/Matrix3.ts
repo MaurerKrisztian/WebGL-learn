@@ -4,7 +4,16 @@
 
 export class Matrix3 {
 
-    static translation(tx, ty) {
+    /**
+     * Translation matrix. Helps moving an object x, y coordinates.
+     * Usage: multiply your matrix whit result matrix
+     *
+     * @param tx - x coordinate
+     * @param ty - y coordinate
+     * @returns Returns a 3x3 matrix.
+     * @2D
+     */
+    static translation(tx: number, ty: number): number[] {
         return [
             1, 0, 0,
             0, 1, 0,
@@ -12,7 +21,7 @@ export class Matrix3 {
         ];
     }
 
-    static rotation(angleInRadians) {
+    static rotation(angleInRadians: number) {
         const c = Math.cos(angleInRadians);
         const s = Math.sin(angleInRadians);
         return [
@@ -22,7 +31,7 @@ export class Matrix3 {
         ];
     }
 
-    static scaling(sx, sy) {
+    static scaling(sx: number, sy: number) {
         return [
             sx, 0, 0,
             0, sy, 0,
@@ -63,7 +72,7 @@ export class Matrix3 {
         ];
     }
 
-    static projection(width, height) {
+    static projection(width: number, height: number) {
         return [
             2 / width, 0, 0,
             0, -2 / height, 0,

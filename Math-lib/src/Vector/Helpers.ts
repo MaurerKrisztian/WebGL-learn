@@ -1,6 +1,6 @@
 export class Helpers {
 
-    static getExtents(positions) {
+    static getExtents(positions: any) {
         const min = positions.slice(0, 3);
         const max = positions.slice(0, 3);
         for (let i = 3; i < positions.length; i += 3) {

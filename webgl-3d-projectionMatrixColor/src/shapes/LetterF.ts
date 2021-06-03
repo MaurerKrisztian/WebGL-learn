@@ -3,7 +3,7 @@ import { IColor } from "../Render";
 import { Matrix4Multiply } from "../math/Matrix4Multiply";
 import { Uniforms } from "../glsl/data/Uniforms";
 import { Utils } from "../math/Utils";
-import { Matrix4 } from "../../../Math-lib/src/Matrix/Matrix4";
+import { Matrix4 } from "../../../Math-lib/src/3D/Matrix4";
 import { Attributes } from "../glsl/data/Attributes";
 import { Buffers } from "../glsl/data/Buffers";
 

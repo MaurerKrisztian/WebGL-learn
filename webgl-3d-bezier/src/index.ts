@@ -57,7 +57,6 @@ function drawScene() {
 
     // renderer.draw(letterF)
 
-
     bezier.transformation.setTranslation({
         x: debugger1.debugValues.translationX,
         y: debugger1.debugValues.translationY,

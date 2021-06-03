@@ -1,5 +1,5 @@
-import { Utils } from "../../../Math-lib/src/Matrix/Utils";
-import { BezierCurve } from "../../../Math-lib/src/Vector/BezierCurve";
+import { Utils } from "../../../Math-lib/src/Utils";
+import { BezierCurve } from "../../../Math-lib/src/3D/BezierCurve";
 import { Helpers } from "../../../Math-lib/src/Vector/Helpers";
 import { Buffers } from "../glsl/data/Buffers";
 import { Attributes } from "../glsl/data/Attributes";

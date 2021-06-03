@@ -1,15 +1,22 @@
-import { Vector2 } from "./Vector2";
-import { Matrix4 } from "../Matrix/Matrix4";
-import { Matrix4Multiply } from "../Matrix/Matrix4Multiply";
+import { Vector2 } from "../2D/Vector2";
+import { Matrix4 } from "./Matrix4";
 
+/**
+ * A bezier curve or rather a cubic bezier curve is formed by 4 points. 2 points are the end points. 2 points are the "control points".
+ * https://webglfundamentals.org/webgl/lessons/webgl-3d-geometry-lathe.html
+ * */
 export class BezierCurve {
 
     /**
+     * Interpolation between points above and the process of making 3 points from 4, then 2 from 3, and finally 1 point from 2 works that's not the normal way. Instead someone plugged in all the math and simplified it to a formula like this
      invT = (1 - t)
      P = P1 * invT^3 +
      P2 * 3 * t * invT^2 +
      P3 * 3 * invT * t^2 +
      P4 * t^3
+
+     @param t - (t*100)% of the way going on each line
+     @return Using the formula above we can generate a point for a given t value like this.
      * */
     static getPointOnBezierCurve(points: number[], offset: number, t: number) {
         const invT = (1 - t);
@@ -19,22 +26,29 @@ export class BezierCurve {
             Vector2.mult(points[offset + 3], t * t * t));
     }
 
-    static flatness(points, offset) {
+    /**
+     * for a given curve decides how flat it is.
+     * **/
+    static flatness(points: number[][], offset: number) {
         const p1 = points[offset + 0];
         const p2 = points[offset + 1];
         const p3 = points[offset + 2];
         const p4 = points[offset + 3];
 
-        let ux = 3 * p2[0] - 2 * p1[0] - p4[0]; ux *= ux;
-        let uy = 3 * p2[1] - 2 * p1[1] - p4[1]; uy *= uy;
-        let vx = 3 * p3[0] - 2 * p4[0] - p1[0]; vx *= vx;
-        let vy = 3 * p3[1] - 2 * p4[1] - p1[1]; vy *= vy;
+        let ux = 3 * p2[0] - 2 * p1[0] - p4[0];
+        ux *= ux;
+        let uy = 3 * p2[1] - 2 * p1[1] - p4[1];
+        uy *= uy;
+        let vx = 3 * p3[0] - 2 * p4[0] - p1[0];
+        vx *= vx;
+        let vy = 3 * p3[1] - 2 * p4[1] - p1[1];
+        vy *= vy;
 
-        if(ux < vx) {
+        if (ux < vx) {
             ux = vx;
         }
 
-        if(uy < vy) {
+        if (uy < vy) {
             uy = vy;
         }
 
@@ -42,9 +56,16 @@ export class BezierCurve {
     }
 
     /**
-     * tolerance: minimum distance between points?
+     * If the curve is sharp you'd want more points.
+     * If the curve is nearly a straight line though you'd probably want less points. One solution is to check how curvy a curve is.
+     * If it's too curvy then split it into 2 curves.
+     * @param points - curve points
+     * @param offset -
+     * @param tolerance -
+     * @param newPoints -
+     *
      * */
-    static getPointsOnBezierCurveWithSplitting(points, offset, tolerance, newPoints) {
+    static getPointsOnBezierCurveWithSplitting(points: any, offset: number, tolerance: number, newPoints?: any) {
         const outPoints = newPoints || [];
         if (BezierCurve.flatness(points, offset) < tolerance) {
 
@@ -87,7 +108,7 @@ export class BezierCurve {
      * If it's less than than that distance we just keep the 2 end points and discard the rest
      * Otherwise we run the algorithm again, once with the points from the start to the furthest point and again from the furthest point to the end point.
      * */
-    static simplifyPoints(points, start, end, epsilon, newPoints: number[] = []) {
+    static simplifyPoints(points: any, start: any, end: any, epsilon: any, newPoints: number[] = []) {
         const outPoints = newPoints || [];
 
         // find the most distance point from the endpoints
@@ -119,9 +140,27 @@ export class BezierCurve {
         return outPoints;
     }
 
-    // gets points across all segments
-    static getPointsOnBezierCurves(points, tolerance) {
-        const newPoints = [];
+    /** gets points across all segments
+     * points array:
+     *  ```ts
+     ___
+     44, 371,   |
+     62, 338,   | 1st curve
+     63, 305,___|__
+     59, 260,___|  |
+     55, 215,      | 2nd curve
+     22, 156,______|__
+     20, 128,______|  |
+     18, 100,         | 3rd curve
+     31,  77,_________|__
+     36,  47,_________|  |
+     41,  17,            | 4th curve
+     39, -16,            |
+     0, -16,____________|
+     ```
+     * */
+    static getPointsOnBezierCurves(points: any, tolerance: any) {
+        const newPoints: any = [];
         const numSegments = (points.length - 1) / 3;
         for (let i = 0; i < numSegments; ++i) {
             const offset = i * 3;
@@ -130,13 +169,17 @@ export class BezierCurve {
         return newPoints;
     }
 
-    // rotates around Y axis.
-    static lathePoints(points,
-                         startAngle,   // angle to start at (ie 0)
-                         endAngle,     // angle to end at (ie Math.PI * 2)
-                         numDivisions, // how many quads to make around
-                         capStart,     // true to cap the start
-                         capEnd) {     // true to cap the end
+    /**
+     We decide how many divisions to make, for each division you use the matrix math to rotate the points around the Y axis.
+     Once we've made all the points we connect them with triangles using indices.
+
+     */
+    static lathePoints(points: any,
+                       startAngle: any,   // angle to start at (ie 0)
+                       endAngle: any,     // angle to end at (ie Math.PI * 2)
+                       numDivisions: any, // how many quads to make around
+                       capStart: any,     // true to cap the start
+                       capEnd: any) {     // true to cap the end
         const positions = [];
         const texcoords = [];
         const indices = [];
@@ -155,7 +198,7 @@ export class BezierCurve {
                 positions.push(0, points[0][1], 0);
                 texcoords.push(u, 0);
             }
-            points.forEach((p, ndx) => {
+            points.forEach((p: any, ndx: any) => {
                 const tp = Matrix4.transformPoint(mat, [...p, 0]);
                 positions.push(tp[0], tp[1], tp[2]);
                 const v = (ndx + vOffset) / quadsDown;
@@ -186,7 +229,12 @@ export class BezierCurve {
     }
 
 
-    static lerp(a, b, t) {
+    /**
+     * Linear Interpolation
+     * t = 0.3 (get a point in a-b line what is 30% in between them)
+     * (a)---x-------(b)
+     * */
+    static lerp(a: any, b: any, t: any) {
         return a + (b - a) * t;
     }
 }

@@ -1,15 +1,15 @@
-import { Vector2 } from "../Vector/Vector2";
+import { Vector2 } from "./2D/Vector2";
 
 export class Utils {
     static angleToRadiant(angleInDegrees: number) {
         return angleInDegrees * Math.PI / 180;
     }
 
-    randomInt(range) {
+    randomInt(range: any) {
         return Math.floor(Math.random() * range);
     }
 
-    static drawBufferInfo(gl, bufferInfo, primitiveType, count?: any, offset?: any) {
+    static drawBufferInfo(gl:any, bufferInfo:any, primitiveType:any, count?: any, offset?: any) {
         const indices = bufferInfo.indices;
         primitiveType = primitiveType === undefined ? gl.TRIANGLES : primitiveType;
         const numElements = count === undefined ? bufferInfo.numElements : count;
@@ -22,13 +22,13 @@ export class Utils {
         }
     }
 
-    static parseSVGPath(svg) {
-        const points = [];
+    static parseSVGPath(svg:any) {
+        const points:any = [];
         let delta = false;
         let keepNext = false;
         let need = 0;
         let value = '';
-        let values = [];
+        let values:any = [];
         let lastValues = [0, 0];
         let nextLastValues = [0, 0];
 
@@ -54,7 +54,7 @@ export class Utils {
             }
         }
 
-        svg.split('').forEach(c => {
+        svg.split('').forEach((c:any) => {
             // @ts-ignore
             if ((c >= '0' && c <= '9') || 'c' === '.') {
                 value += c;

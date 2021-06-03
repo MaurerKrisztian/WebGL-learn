@@ -2,14 +2,13 @@
 * 3D matrix
 * */
 
-import { Vector2 } from "../Vector/Vector2";
-import { Vector3 } from "../Vector/Vector3";
+import { Vector3 } from "./Vector3";
 
 export class Matrix4 {
     constructor() {
     }
 
-    static translation(tx, ty, tz) {
+    static translation(tx: number, ty: number, tz: number) {
         return [
             1, 0, 0, 0,
             0, 1, 0, 0,
@@ -18,7 +17,7 @@ export class Matrix4 {
         ];
     }
 
-    static xRotation(angleInRadians) {
+    static xRotation(angleInRadians: number) {
         const c = Math.cos(angleInRadians);
         const s = Math.sin(angleInRadians);
 
@@ -30,7 +29,7 @@ export class Matrix4 {
         ];
     }
 
-    static yRotation(angleInRadians) {
+    static yRotation(angleInRadians: number) {
         const c = Math.cos(angleInRadians);
         const s = Math.sin(angleInRadians);
 
@@ -42,7 +41,7 @@ export class Matrix4 {
         ];
     }
 
-    static zRotation(angleInRadians) {
+    static zRotation(angleInRadians: number) {
         var c = Math.cos(angleInRadians);
         var s = Math.sin(angleInRadians);
 
@@ -54,7 +53,7 @@ export class Matrix4 {
         ];
     }
 
-    static scaling(sx, sy, sz) {
+    static scaling(sx: number, sy: number, sz: number) {
         return [
             sx, 0, 0, 0,
             0, sy, 0, 0,
@@ -63,7 +62,7 @@ export class Matrix4 {
         ];
     }
 
-    static multiply(a, b) {
+    static multiply(a: number[], b: number[]) {
         var b00 = b[0 * 4 + 0];
         var b01 = b[0 * 4 + 1];
         var b02 = b[0 * 4 + 2];
@@ -117,7 +116,7 @@ export class Matrix4 {
         ];
     }
 
-    static projection(width, height, depth) {
+    static projection(width: number, height: number, depth: number) {
         // Note: This matrix flips the Y axis so 0 is at the top.
         return [
             2 / width, 0, 0, 0,
@@ -127,7 +126,7 @@ export class Matrix4 {
         ];
     }
 
-    static transformPoint(m, v, dst?: any) {
+    static transformPoint(m:any, v:any, dst?: any) {
         dst = dst || new Float32Array(3);
         var v0 = v[0];
         var v1 = v[1];
@@ -144,16 +143,16 @@ export class Matrix4 {
     static identity(dst?: any) {
         dst = dst || new Float32Array(16);
 
-        dst[ 0] = 1;
-        dst[ 1] = 0;
-        dst[ 2] = 0;
-        dst[ 3] = 0;
-        dst[ 4] = 0;
-        dst[ 5] = 1;
-        dst[ 6] = 0;
-        dst[ 7] = 0;
-        dst[ 8] = 0;
-        dst[ 9] = 0;
+        dst[0] = 1;
+        dst[1] = 0;
+        dst[2] = 0;
+        dst[3] = 0;
+        dst[4] = 0;
+        dst[5] = 1;
+        dst[6] = 0;
+        dst[7] = 0;
+        dst[8] = 0;
+        dst[9] = 0;
         dst[10] = 1;
         dst[11] = 0;
         dst[12] = 0;
@@ -164,7 +163,7 @@ export class Matrix4 {
         return dst;
     }
 
-    static perspective(fieldOfViewInRadians, aspect, near, far) {
+    static perspective(fieldOfViewInRadians: number, aspect: number, near: number, far: number) {
         var f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewInRadians);
         var rangeInv = 1.0 / (near - far);
 
@@ -176,7 +175,7 @@ export class Matrix4 {
         ];
     }
 
-    static makeZToWMatrix(fudgeFactor) {
+    static makeZToWMatrix(fudgeFactor: number) {
         return [
             1, 0, 0, 0,
             0, 1, 0, 0,
@@ -185,7 +184,7 @@ export class Matrix4 {
         ];
     }
 
-    static cross(a, b, dst?: any) {
+    static cross(a: number[], b: number[], dst?: any) {
         dst = dst || new Matrix4.MatType(3);
         dst[0] = a[1] * b[2] - a[2] * b[1];
         dst[1] = a[2] * b[0] - a[0] * b[2];
@@ -195,23 +194,24 @@ export class Matrix4 {
 
 
     static MatType = Float32Array;
-    static lookAt(cameraPosition, target, up, dst?: any) {
+
+    static lookAt(cameraPosition: any, target: any, up: any, dst?: any) {
         dst = dst || new Matrix4.MatType(16);
         var zAxis = Matrix4.normalize(
             Vector3.subtractVectors(cameraPosition, target));
         var xAxis = Matrix4.normalize(Matrix4.cross(up, zAxis));
         var yAxis = Matrix4.normalize(Matrix4.cross(zAxis, xAxis));
 
-        dst[ 0] = xAxis[0];
-        dst[ 1] = xAxis[1];
-        dst[ 2] = xAxis[2];
-        dst[ 3] = 0;
-        dst[ 4] = yAxis[0];
-        dst[ 5] = yAxis[1];
-        dst[ 6] = yAxis[2];
-        dst[ 7] = 0;
-        dst[ 8] = zAxis[0];
-        dst[ 9] = zAxis[1];
+        dst[0] = xAxis[0];
+        dst[1] = xAxis[1];
+        dst[2] = xAxis[2];
+        dst[3] = 0;
+        dst[4] = yAxis[0];
+        dst[5] = yAxis[1];
+        dst[6] = yAxis[2];
+        dst[7] = 0;
+        dst[8] = zAxis[0];
+        dst[9] = zAxis[1];
         dst[10] = zAxis[2];
         dst[11] = 0;
         dst[12] = cameraPosition[0];
@@ -222,7 +222,7 @@ export class Matrix4 {
         return dst;
     }
 
-    static normalize(v, dst?: any) {
+    static normalize(v: number[], dst?: any) {
         dst = dst || new Matrix4.MatType(3);
         var length = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
         // make sure we don't divide by 0.
@@ -235,7 +235,7 @@ export class Matrix4 {
     }
 
 
-    static inverse(m, dst?: any) {
+    static inverse(m:number[], dst?: any) {
         dst = dst || new Matrix4.MatType(16);
         var m00 = m[0 * 4 + 0];
         var m01 = m[0 * 4 + 1];
@@ -253,16 +253,16 @@ export class Matrix4 {
         var m31 = m[3 * 4 + 1];
         var m32 = m[3 * 4 + 2];
         var m33 = m[3 * 4 + 3];
-        var tmp_0  = m22 * m33;
-        var tmp_1  = m32 * m23;
-        var tmp_2  = m12 * m33;
-        var tmp_3  = m32 * m13;
-        var tmp_4  = m12 * m23;
-        var tmp_5  = m22 * m13;
-        var tmp_6  = m02 * m33;
-        var tmp_7  = m32 * m03;
-        var tmp_8  = m02 * m23;
-        var tmp_9  = m22 * m03;
+        var tmp_0 = m22 * m33;
+        var tmp_1 = m32 * m23;
+        var tmp_2 = m12 * m33;
+        var tmp_3 = m32 * m13;
+        var tmp_4 = m12 * m23;
+        var tmp_5 = m22 * m13;
+        var tmp_6 = m02 * m33;
+        var tmp_7 = m32 * m03;
+        var tmp_8 = m02 * m23;
+        var tmp_9 = m22 * m03;
         var tmp_10 = m02 * m13;
         var tmp_11 = m12 * m03;
         var tmp_12 = m20 * m31;
