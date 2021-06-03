@@ -30,7 +30,7 @@ export class BezierGenerator {
 
     generateMesh(gl) {
         const tempPoints = BezierCurve.getPointsOnBezierCurves(this.curvePoints, this.bezierOptions.tolerance);
-        const points = BezierCurve.simplifyPoints(tempPoints, 0, tempPoints.length, this.bezierOptions.distance);
+        const points: any = BezierCurve.simplifyPoints(tempPoints, 0, tempPoints.length, this.bezierOptions.distance);
         const arrays = BezierCurve.lathePoints(points, this.bezierOptions.startAngle, this.bezierOptions.endAngle, this.bezierOptions.divisions, this.bezierOptions.capStart, this.bezierOptions.capEnd);
         const extents = Helpers.getExtents(arrays.position);
         return arrays
