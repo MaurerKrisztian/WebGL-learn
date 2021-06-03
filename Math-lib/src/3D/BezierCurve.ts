@@ -174,12 +174,12 @@ export class BezierCurve {
      Once we've made all the points we connect them with triangles using indices.
 
      */
-    static lathePoints(points: any,
-                       startAngle: any,   // angle to start at (ie 0)
-                       endAngle: any,     // angle to end at (ie Math.PI * 2)
-                       numDivisions: any, // how many quads to make around
-                       capStart: any,     // true to cap the start
-                       capEnd: any) {     // true to cap the end
+    static lathePoints(points: number[][],
+                       startAngle: number,   // angle to start at (ie 0)
+                       endAngle: number,     // angle to end at (ie Math.PI * 2)
+                       numDivisions: number, // how many quads to make around
+                       capStart: boolean,     // true to cap the start
+                       capEnd: boolean) {     // true to cap the end
         const positions = [];
         const texcoords = [];
         const indices = [];

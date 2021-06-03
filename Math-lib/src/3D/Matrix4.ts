@@ -140,7 +140,7 @@ export class Matrix4 {
         return dst;
     }
 
-    static identity(dst?: any) {
+    static identity(dst?: Float32Array) {
         dst = dst || new Float32Array(16);
 
         dst[0] = 1;
