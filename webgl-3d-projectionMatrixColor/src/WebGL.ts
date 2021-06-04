@@ -18,7 +18,7 @@ export class WebGL {
                 return shader;
             }
 
-            console.log(gl.getShaderInfoLog(shader));
+            // console.log(gl.getShaderInfoLog(shader));
             gl.deleteShader(shader);
         }
 

@@ -1,23 +1,19 @@
-export class Slider {
-    slider: any;
+export class CheckBox {
+
+
+    checkBoxElement: any;
     valueHtml;
 
     constructor(private readonly id: string,
-                private readonly min: number,
-                private readonly max: number,
-                private readonly step: number = 0.1,
                 private readonly name?: string) {
-        this.createSlider(id, name);
+        this.create(id, name);
         this.getSlider(id)
-        this.slider.min = min+ ".0";
-        this.slider.max = max+ ".0";
-        this.slider.step = step.toString()
-        this.slider.value = step.toString() || "0.1"
+
+        // this.checkBoxElement.value = false
     }
 
     getValue() {
-        // console.log("checkbox value.. ", true.slider)
-        return this.slider.value
+        return this.checkBoxElement.checked
     }
 
     getFloatValue() {
@@ -29,20 +25,20 @@ export class Slider {
     }
 
     getSlider(id: string) {
-        this.slider = document.getElementById(id);
-        if (!this.slider) {
+        this.checkBoxElement = document.getElementById(id);
+        if (!this.checkBoxElement) {
             throw new Error("slider is undefined: " + id)
         }
     }
 
     setCallback(cb: any) {
-        this.slider.oninput =()=>{
+        this.checkBoxElement.oninput =()=>{
             this.setValueText(this.getFloatValue())
             cb()
         }
     }
 
-    createSlider(id: string, name?: string) {
+    create(id: string, name?: string) {
         var inputContainer = document.createElement('div');
         inputContainer.className = "inputContainer"
         var nameP = document.createElement('span');
@@ -55,12 +51,14 @@ export class Slider {
 
         const container = document.getElementById('sliderContainer')
         var slider: any = document.createElement("input");
+
         inputContainer.append(nameP)
         inputContainer.append(slider)
         inputContainer.append(value)
         container.append(inputContainer)
         slider.id = id
-        slider.type = 'range';
+        slider.type = 'checkbox';
         // container.prepend(slider);
     }
+
 }

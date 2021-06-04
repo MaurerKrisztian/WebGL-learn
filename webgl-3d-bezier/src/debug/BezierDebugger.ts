@@ -1,6 +1,7 @@
 import { Debugger } from "./Debugger";
 import { BezierOptions } from "../core/BezierGenerator";
 import { Slider } from "./Slider";
+import { CheckBox } from "./CheckBox";
 
 export class BezierDebugger extends Debugger {
     bezierOptions: BezierOptions =  {
@@ -26,6 +27,11 @@ export class BezierDebugger extends Debugger {
         const divisions = new Slider("divisions", 1, 200, 1);
         divisions.setCallback(() => {
             this.bezierOptions.divisions =  Number.parseFloat(divisions.getValue())
+        })
+
+        const checkBox = new CheckBox("triangles");
+        checkBox.setCallback(() => {
+            this.bezierOptions.triangles =  checkBox.getValue()
         })
     }
 }

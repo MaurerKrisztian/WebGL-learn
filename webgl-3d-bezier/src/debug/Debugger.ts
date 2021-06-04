@@ -2,6 +2,7 @@ import { Slider } from "./Slider";
 import { SetupActions } from "../../../Actions-lib/Actions/SetupActions";
 import { ActionHandler } from "./ActionHandler";
 import { Utils } from "../math/Utils";
+import { CheckBox } from "./CheckBox";
 
 export class Debugger {
     debugValues: IDebugValues = {

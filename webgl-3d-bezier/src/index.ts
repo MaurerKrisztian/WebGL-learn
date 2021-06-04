@@ -81,6 +81,7 @@ function drawScene() {
 
     bezier.bezierGenerator.bezierOptions.endAngle = debugger1.bezierOptions.endAngle
     bezier.bezierGenerator.bezierOptions.divisions = debugger1.bezierOptions.divisions
+    bezier.bezierGenerator.bezierOptions.triangles = debugger1.bezierOptions.triangles
 renderer.draw(bezier)
 
 
