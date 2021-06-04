@@ -1,72 +1,51 @@
-import { Buffers } from "../glsl/data/Buffers";
-import { Values } from "../glsl/data/Values";
-import { Attributes } from "../glsl/data/Attributes";
-
 export class TextureLoader {
 
-    static loadTexture(gl, src: string) {
 
-        var texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-
-        // Fill the texture with a 1x1 blue pixel.
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
-            new Uint8Array([0, 0, 255, 255]));
-
-        var image = new Image();
-        image.crossOrigin = "Anonymous"
-        image.src = src;
-        // image.height = 16;
-        // image.width = 16
-        // console.log(image)
-        image.addEventListener('load', function () {
-            console.log(image)
-            // Now that the image has loaded make copy it to the texture.
-            gl.bindTexture(gl.TEXTURE_2D, texture);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-            gl.generateMipmap(gl.TEXTURE_2D);
-        });
-
-        return texture
-    }
-
-
-    static setTexcoords(gl, coord) {
-        gl.bindBuffer(gl.ARRAY_BUFFER, Buffers.texcoordBuffer);
-
+    /**
+     * create a texture buffer with the coordinates and set it to the textureLocation location
+     * @param gl - WebGL context
+     * @param texcoord - texture coordinates
+     * @param textureLocation - texture attribute location
+     * @param textureBuffer - a WebGLBuffer where to set the data
+     * */
+    static setTexture(gl: any, texcoord: number[], textureLocation: number, textureBuffer: WebGLBuffer) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
         gl.bufferData(
             gl.ARRAY_BUFFER,
-            new Float32Array(coord),
+            new Float32Array(texcoord),
             gl.STATIC_DRAW);
 
-        gl.enableVertexAttribArray(Attributes.a_texcoord_location);
+        gl.enableVertexAttribArray(textureLocation);
         // bind the texcoord buffer.
-        gl.bindBuffer(gl.ARRAY_BUFFER, Buffers.texcoordBuffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
 
         // Tell the texcoord attribute how to get data out of texcoordBuffer (ARRAY_BUFFER)
-        var size = 2;          // 2 components per iteration
-        var type = gl.FLOAT;   // the data is 32bit floats
-        var normalize = false; // don't normalize the data
-        var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-        var offset = 0;        // start at the beginning of the buffer
-        gl.vertexAttribPointer(
-            Attributes.a_texcoord_location, size, type, normalize, stride, offset);
+        const size = 2;          // 2 components per iteration
+        const type = gl.FLOAT;   // the data is 32bit floats
+        const normalize = false; // don't normalize the data
+        const stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+        const offset = 0;        // start at the beginning of the buffer
+        gl.vertexAttribPointer(textureLocation, size, type, normalize, stride, offset);
     }
 
-    static loadImageAndCreateTextureInfo(gl, url, callback) {
-        var tex = gl.createTexture();
+
+    /**
+     * load texture by url
+     * */
+    static loadImageTexture(gl: any, url: string, callback?: Function): ITextureInfo {
+        const tex = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, tex);
         // Fill the texture with a 1x1 blue pixel.
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
             new Uint8Array([0, 0, 255, 255]));
 
-        var textureInfo = {
+        let textureInfo = {
             width: 1,   // we don't know the size until it loads
             height: 1,
             texture: tex,
         };
-        var img = new Image();
-        img.addEventListener('load', function() {
+        const img = new Image();
+        img.addEventListener('load', function () {
             textureInfo.width = img.width;
             textureInfo.height = img.height;
 
@@ -96,4 +75,11 @@ export class TextureLoader {
     static isPowerOf2(value) {
         return (value & (value - 1)) === 0;
     }
+}
+
+
+export interface ITextureInfo {
+    width: number,
+    height: number,
+    texture: any
 }

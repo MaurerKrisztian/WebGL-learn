@@ -2,8 +2,8 @@ import { WebGL } from "./WebGL";
 import { Render } from "./core/Render";
 import { Attributes } from "./glsl/data/Attributes";
 
-import vertexShaderStr from './glsl/vertex-shader-2d.glsl';
-import fragmentShaderStr from './glsl/fragment-shader-2d.glsl';
+import vertexShaderStr from './glsl/vertex-shader-3d.glsl';
+import fragmentShaderStr from './glsl/fragment-shader-3d.glsl';
 import { Uniforms } from "./glsl/data/Uniforms";
 import { Debugger } from "./debug/Debugger";
 import { LetterF } from "./shapes/LetterF";
@@ -17,6 +17,8 @@ const gl = WebGL.getWebglContext()
 const program = WebGL.getProgram();
 
 
+const webglUtils = require("./WebGLUtils")
+
 Attributes.a_position_location = gl.getAttribLocation(program, "a_position");
 Attributes.a_texcoord_location = gl.getAttribLocation(program, "a_texcoord");
 
@@ -24,9 +26,14 @@ Uniforms.u_matrix_location = gl.getUniformLocation(program, "u_matrix")
 Uniforms.u_texture_location = gl.getUniformLocation(program, "u_texture");
 
 Buffers.init(gl)
+const svg = "m44,434c18,-33 19,-66 15,-111c-4,-45 -37,-104 -39,-132c-2,-28 11,-51 16,-81c5,-30 3,-63 -36,-63";
 
-let texture = TextureLoader.loadTexture(gl, "/src/resources/minecraft.jpg")
-gl.uniform1i(Uniforms.u_texture_location, texture);
+// let texture = TextureLoader.loadTexture(gl, "/src/resources/uv-grid.png")
+let textureInfo = TextureLoader.loadImageTexture(gl, "/src/resources/uv-grid.png", ()=>{})
+// gl.uniform1i(Uniforms.u_texture_location, textureInfo.texture);
+webglUtils.setUniforms(program, {
+    u_texture: textureInfo.texture,
+});
 
 
 const renderer = new Render(gl);
@@ -49,6 +56,7 @@ letterF.transformation.setTranslation({
 
 // const bezier = new BezierLathe("m44,434c18,-33 19,-66 15,-111c-4,-45 -37,-104 -39,-132c-2,-28 11,-51 16,-81c5,-30 3,-63 -36,-100");
 const bezier = new BezierLathe("M 482, 590 C 73, 773, 500, 100, 483, 586");
+// const bezier = new BezierLathe(svg);
 drawScene()
 
 
